@@ -2,7 +2,6 @@ package consul
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/hashicorp/consul/api"
 )
@@ -12,7 +11,15 @@ type Discovery struct {
 	client *api.Client
 }
 
-func New(address string)(*Discovery, error){
+// New provides initialization for consul discovery
+func New(address string) (*Discovery, error) {
 	conf := api.DefaultConfig()
 	conf.Address = address
+	client, err := api.NewClient(conf)
+	if err != nil {
+		return nil, fmt.Errorf("unablw to init consul client: %v", err)
+	}
+	return &Discovery{
+		client: client,
+	}, nil
 }
