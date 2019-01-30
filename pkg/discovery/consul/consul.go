@@ -17,9 +17,24 @@ func New(address string) (*Discovery, error) {
 	conf.Address = address
 	client, err := api.NewClient(conf)
 	if err != nil {
-		return nil, fmt.Errorf("unablw to init consul client: %v", err)
+		return nil, fmt.Errorf("unable to init consul client: %v", err)
 	}
 	return &Discovery{
 		client: client,
 	}, nil
+}
+
+// GetServices returns map of registered services
+func (d *Discovery) GetServices() (map[string][]string, error) {
+	return d.getServices()
+}
+
+// returns map of services
+func (d *Discovery) getServices() (map[string][]string, error) {
+	data, _, err := d.client.Catalog().Services(nil)
+	if err != nil {
+		return nil, fmt.Errorf("unable to get services: %v", err)
+	}
+
+	return data, nil
 }
